@@ -5,7 +5,7 @@ A data pipeline that pulls fantasy football data from the Sleeper API and stores
 This package runs a three step process to pull data from a User's fantasy league from Sleeper (https://docs.sleeper.com/). The extract module makes the api calls and returns JSON data. The transform module transforms JSON data into table entries. The load module loads the table data into an sqlite database.
 
 ## Also Included:
-For now, I am including a few sample visualizations as a part of this library. Test.
+For now, I am including a few sample visualizations as a part of this library.
 
 ### Schedule Luck Visualization
 "Schedule Luck" is defined as the number of wins a fantasy team actually won minus the average number of wins it would have won had the team played every possible schedule ("Schedule Wins"). To calculate Schedule Wins for a team in a single week, we count how many opponents the team would have won against in that week divided by the number of other teams in the league. To calculate schedule wins for the season, we add all of the schedule wins from all weeks for that team.
