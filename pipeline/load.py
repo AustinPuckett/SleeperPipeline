@@ -1,5 +1,5 @@
-import fantasy_db
-import transform
+import pipeline.fantasy_db as fantasy_db
+import pipeline.transform as transform
 import numpy as np
 import time
 
@@ -31,8 +31,8 @@ class FantasyApi():
             if fantasy_db.table_exists(self.conn, table_name):
                 if _overwrite:
                     table_fields = transform.get_json_keys(table_entries)
-                    fantasy_db.delete_table(self.conn, table_name) # TODO: Code method within class???
-                    fantasy_db.create_table(self.conn, table_name, table_fields) # TODO: Code method within class???
+                    fantasy_db.delete_table(self.conn, table_name)  # TODO: Code method within class???
+                    fantasy_db.create_table(self.conn, table_name, table_fields)  # TODO: Code method within class???
                     self.conn.commit()
                 else:
                     table_fields = [i for i in fantasy_db.get_table_column_names(self.conn, table_name)[1:]]
@@ -58,7 +58,7 @@ class FantasyApi():
         '''
         table_data_list = []
 
-        #Append table_data
+        # Append table_data
         for table_name in table_names:
             if fantasy_db.table_exists(self.conn, table_name):
                 table_data = fantasy_db.get_table_data(self.conn, table_name)
@@ -83,9 +83,10 @@ class FantasyApi():
         if fantasy_db.table_exists(self.conn, table_name):
             fantasy_db.delete_table(self.conn, table_name)
 
+
 if __name__ == '__main__':
     t0 = time.time()
-    num_weeks=18
+    num_weeks = 18
 
     db = 'fantasy.db'
     api = FantasyApi(db)

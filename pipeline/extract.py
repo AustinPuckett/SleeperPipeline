@@ -187,7 +187,7 @@ def extract_all(api_params={'league_id':'858131629682577408',
 def extract_many(endpoints,
                 api_params={'league_id':'858131629682577408',
                             'draft_id':'983048181460119553',
-                            'week': 1},
+                            'week': 4},
                 include_player_data=True):
     '''Call all "get" functions and save their output_data to a specified directory.'''
 

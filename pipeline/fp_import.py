@@ -1,6 +1,5 @@
 import pandas as pd
 import sqlite3 as sql
-import fantasy_db
 
 def clean_ros_projections(csv_file, player_position):
     df = pd.read_csv(csv_file)

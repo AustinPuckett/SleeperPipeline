@@ -1,6 +1,6 @@
 import sqlite3 as sql
 import pandas as pd
-from utils import extract_first_two_words, get_item_from_dataframe_list_entry
+from pipeline.utils import extract_first_two_words, get_item_from_dataframe_list_entry
 
 
 def reconcile_projections_tables(conn):
