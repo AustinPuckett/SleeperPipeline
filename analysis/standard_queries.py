@@ -88,6 +88,33 @@ def get_luck_factor_df(conn, eval_week):
 
     return luck_factor_df.reset_index()
 
+def get_roster_week_points_df(conn, eval_week):
+    roster_week_df = pd.read_sql_query("SELECT * FROM roster_week", conn)
+    roster_df = pd.read_sql_query("SELECT * FROM roster", conn)
+    user_df = pd.read_sql_query("SELECT * FROM user", conn)
+
+    # Points by Roster week
+    df_1 = (
+            roster_week_df
+            .drop_duplicates(subset=['roster_id', 'week_id', 'matchup_id'])
+            .merge(roster_df, how='left', left_on='roster_id', right_on='roster_id')
+            .merge(user_df, how='left', left_on='owner_id', right_on='user_id')
+            .loc[lambda df: df.week_id <= eval_week]
+            .loc[:, ['display_name', 'roster_id', 'week_id', 'wins', 'losses', 'points']]
+            .sort_values(by='week_id', ascending=False)
+            )
+
+    df_1['weekly_points_rank'] = (
+                                    df_1
+                                    .groupby('week_id')
+                                    ['points']
+                                    .rank(method='min', ascending=False)
+                                  )
+
+    roster_week_points_df = df_1.sort_values('points', ascending=False)
+
+    return roster_week_points_df.reset_index()
+
 if __name__ == '__main__':
     db = 'fantasy.db'
     conn = sql.connect(db)

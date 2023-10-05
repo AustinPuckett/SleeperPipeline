@@ -1,4 +1,4 @@
-import analysis.schedule_luck_viz as luck_viz
+import analysis.visualizations as visualizations
 from app.view import *
 
 
@@ -70,14 +70,19 @@ class StartPresenter():
         visual_selection = self.view.visual_selection.get()
         week = self.view.week_selection.get()
 
+        if visual_selection == 'Schedule Luck':
+            luck_factor_df = self.model.get_luck_factor_df()
+            visualizations.luck_factor_plot(luck_factor_df, week)
+        elif visual_selection == 'Roster Week Points':
+            roster_week_points_df = self.model.get_roster_week_points_df()
+            visualizations.roster_week_points_plot(roster_week_points_df, week)
+        else:
+            pass
+
         # if (event != None) and (self.view.canvas != None):
         #     self.view.canvas.get_tk_widget().destroy()
-
-        luck_factor_df = self.model.get_luck_factor_df()
-
         # self.view.canvas = luck_viz.luck_factor_plot(self.view.frame2, luck_factor_df, week)
         # self.view.canvas.get_tk_widget().grid(row=4, column=0, padx=1, pady=3, rowspan=1, columnspan=1)
-        luck_viz.luck_factor_plot(luck_factor_df, week)
 
     def run(self):
         self.view.init_ui(self)

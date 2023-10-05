@@ -106,11 +106,15 @@ class StartModel():
     def __init__(self, db_conn):
         ...
         self.db_conn = db_conn
-        self.visuals = ['Schedule Luck']
+        self.visuals = ['Schedule Luck', 'Roster Week Points']
         self.eval_week = self.get_week()
 
     def get_luck_factor_df(self):
         df = standard_queries.get_luck_factor_df(self.db_conn, self.eval_week)
+        return df
+
+    def get_roster_week_points_df(self):
+        df = standard_queries.get_roster_week_points_df(self.db_conn, self.eval_week)
         return df
 
     def get_week(self):
