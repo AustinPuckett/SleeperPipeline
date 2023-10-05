@@ -1,5 +1,5 @@
 import sqlite3
-
+from time import time
 
 def get_table_column_names(conn, table_name):
     c = conn.cursor()

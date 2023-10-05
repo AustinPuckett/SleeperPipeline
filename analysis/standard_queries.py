@@ -1,7 +1,6 @@
 import sqlite3 as sql
 import pandas as pd
 
-
 def get_roster(conn, roster_id, week, starters_only=False):
     '''Warning: This function uses string formatting of the SQL statement in place of a bind'''
 
@@ -26,10 +25,31 @@ def get_roster(conn, roster_id, week, starters_only=False):
     cursor.close()
 
     return roster
+
 def get_player(full_name, pos, team=None):
     pass
 
-def luck_factor(eval_week, roster_week_df, roster_df, user_df):
+def get_roster_df(conn):
+    roster_df = pd.read_sql_query("SELECT * FROM roster", conn)
+    return roster_df
+
+def get_league_df(conn):
+    league_df = pd.read_sql_query("SELECT * FROM league", conn)
+    return league_df
+
+def get_user_df(conn):
+    user_df = pd.read_sql_query("SELECT * FROM user", conn)
+    return user_df
+
+def get_roster_week_df(conn):
+    roster_week_df = pd.read_sql_query("SELECT * FROM roster_week", conn)
+    return roster_week_df
+
+def get_luck_factor_df(conn, eval_week):
+    roster_week_df = pd.read_sql_query("SELECT * FROM roster_week", conn)
+    roster_df = pd.read_sql_query("SELECT * FROM roster", conn)
+    user_df = pd.read_sql_query("SELECT * FROM user", conn)
+
     # Points by Roster week
     df_1 = (
             roster_week_df

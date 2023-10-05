@@ -1,6 +1,3 @@
-import tkinter as tk
-from tkinter import ttk, font
-
 from app.view import *
 from app.model import *
 from app.presenter import *
@@ -22,9 +19,9 @@ class AppController(tk.Tk):
         self.container.grid(row=0, column=0, padx=2, pady=2, ipadx=0, ipady=0, sticky='N')
 
         self.views = {LoginView: {'model': AccountModel, 'presenter': LoginPresenter},
-                           CreateAccountView: {'model': AccountModel, 'presenter': CreateAccountPresenter},
-                           StartView: {'model': StartModel, 'presenter': StartPresenter},
-                           }
+                      CreateAccountView: {'model': AccountModel, 'presenter': CreateAccountPresenter},
+                      StartView: {'model': StartModel, 'presenter': StartPresenter},
+                      }
 
         self.active_presenter = None
         self.active_view = None

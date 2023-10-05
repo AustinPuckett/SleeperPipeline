@@ -1,18 +1,22 @@
 import os
-from datetime import date
 import json
 import sqlite3 as sql
-import analysis.standard_queries as query
+import analysis.standard_queries as standard_queries
+import pipeline.sleeper_etl as sleeper_etl
 
 class AccountModel():
     '''TODO: Change working directory once this program is converted to a .exe'''
 
     def __init__(self):
-        self.root_path = os.getcwd()
-        self.config_file_name = 'app/config.txt'
+        self.root_path = os.path.join(os.getcwd(), 'app')
+        print(self.root_path)
+        self.config_file_name = 'config.txt'
         self.config_file_name_path = os.path.join(self.root_path, self.config_file_name)
         self.download_file_path = None
         self.db_conn = None
+        self.username = None
+        self.league_id = None
+        self.draft_ids = None
 
         # Check if config file exists
         config_exists = False
@@ -37,6 +41,9 @@ class AccountModel():
                 if username == account_info['username']:
                     database = account_info['database']
                     self.db_conn = sql.connect(database)
+                    self.username = username
+                    self.league_id = account_info['league_id']
+                    self.draft_ids = account_info['draft_ids']
                     login_response['success'] = True
                     return login_response
 
@@ -60,6 +67,7 @@ class AccountModel():
 
     def create_account(self, username, league_id):
         '''Trigger the instantiation of a new database and create an account entry in the configuration file.'''
+
         db_file_name = username + '.db'
         if self.validate_file_name(db_file_name):
             full_database_path = os.path.join(self.root_path, db_file_name)
@@ -71,7 +79,7 @@ class AccountModel():
 
             # Create config file entry
             with open(self.config_file_name_path, 'a') as config_file:
-                entry_dict = {"username": username, "database": db_file_name, "league_id": league_id
+                entry_dict = {"username": username, "database": db_file_name, "league_id": league_id,
                               "directory": self.root_path, "draft_ids": {}}
                 config_file.write(json.dumps(entry_dict) + '\n')
                 print('written kitten', entry_dict)
@@ -82,13 +90,15 @@ class AccountModel():
     def validate_file_name(self, file_name):
         return True
 
-    def instantiate_database_schema(self, db_name):
+    def instantiate_database_schema(self, db_conn, league_id, week=4):
+        # api_params = {'league_id': league_id, 'draft_id': '983048181460119553', 'week': 4} # TODO: pass week as param
+        api_params = {'league_id': league_id, 'draft_id': '983048181460119553', 'week': week}
+        sleeper_etl.run_sleeper_etl(db_conn, api_params=api_params)
+
+    def instantiate_static_tables(self, db_conn):
         pass
 
-    def instantiate_static_tables(self, db_name):
-        pass
-
-    def instantiate_dynamic_tables(self, db_name):
+    def instantiate_dynamic_tables(self, db_conn):
         pass
 
 
@@ -97,9 +107,11 @@ class StartModel():
         ...
         self.db_conn = db_conn
         self.visuals = ['Schedule Luck']
+        self.eval_week = self.get_week()
 
     def get_luck_factor_df(self):
-        df = query.luck_factor_df()
+        df = standard_queries.get_luck_factor_df(self.db_conn, self.eval_week)
+        return df
 
     def get_week(self):
         return 4

@@ -31,7 +31,7 @@ def autolabel(ax, rects, luck_factor_df, xpos='center'):
 def luck_factor_plot(luck_factor_df, week):
     # matplotlib.use('TKAgg')
     luck_factor_df = luck_factor_df.sort_values('wins', ascending=False)
-    img_file = r'C:\Users\pucke\PycharmProjects\SleeperPipeline\images\football_field.jpg'
+    img_file = r'images\lucky.jpg'
     background_image = imageio.v2.imread(img_file, pilmode='RGBA')
 
     fig, ax = plt.subplots(1, 1)
@@ -85,21 +85,3 @@ def luck_factor_plot(luck_factor_df, week):
         f'fig.jpeg',
         facecolor=mcolors.CSS4_COLORS['lightseagreen'])
     plt.show()
-
-
-if __name__ == '__main__':
-    db = r'C:\Users\pucke\PycharmProjects\SleeperPipeline\fantasy.db'
-    api = FantasyApi(db)
-
-    conn = api.conn
-
-    league_df = pd.read_sql_query("SELECT * FROM league", conn)
-    roster_df = pd.read_sql_query("SELECT * FROM roster", conn)
-    user_df = pd.read_sql_query("SELECT * FROM user", conn)
-    roster_week_df = pd.read_sql_query("SELECT * FROM roster_week", conn)
-
-    conn.close()
-
-    eval_week = 4
-    luck_factor_df = luck_factor(eval_week, roster_week_df, roster_df, user_df)
-    luck_factor_plot(luck_factor_df, eval_week)

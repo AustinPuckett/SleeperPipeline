@@ -1,7 +1,3 @@
-import csv
-import os
-# import tkinter as tk
-# from tkinter import ttk, font
 import analysis.schedule_luck_viz as luck_viz
 from app.view import *
 
@@ -17,6 +13,11 @@ class LoginPresenter():
         # password = self.view.bar.get()
         login_response = self.model.validate_login(username)
         if login_response['success'] == True:
+            refresh_data = self.view.data_refresh_var.get()
+            if refresh_data:
+                self.model.instantiate_database_schema(self.model.db_conn, self.model.league_id)
+                self.model.instantiate_static_tables(self.model.db_conn)
+                self.model.instantiate_dynamic_tables(self.model.db_conn)
             self.master.change_view(StartView)
         else:
             # trigger the view.error method and show the login response
@@ -45,7 +46,8 @@ class CreateAccountPresenter():
 
     def create_account(self, event):
         username = self.view.username_entry.get()
-        self.model.create_account(username)
+        league_id = self.view.league_id_entry.get()
+        self.model.create_account(username, league_id)
         self.master.change_view(LoginView)
 
     def show_login_view(self, event):
@@ -65,34 +67,32 @@ class StartPresenter():
         self.model = model
         self.view = view
     def render_graph(self, event):
-        exercise_name = self.view.visual_selection.get()
-        # repetitions = self.view.rep_selection.get()
-        # entry_dict = {'exercise_name': exercise_name, 'repetitions': repetitions}
-        #
-        if (event != None) and (self.view.canvas != None):
-            self.view.canvas.get_tk_widget().destroy()
+        visual_selection = self.view.visual_selection.get()
+        week = self.view.week_selection.get()
+
+        # if (event != None) and (self.view.canvas != None):
+        #     self.view.canvas.get_tk_widget().destroy()
 
         luck_factor_df = self.model.get_luck_factor_df()
-        week = self.model.get_week()
-
 
         # self.view.canvas = luck_viz.luck_factor_plot(self.view.frame2, luck_factor_df, week)
         # self.view.canvas.get_tk_widget().grid(row=4, column=0, padx=1, pady=3, rowspan=1, columnspan=1)
         luck_viz.luck_factor_plot(luck_factor_df, week)
-        pass
 
     def run(self):
         self.view.init_ui(self)
 
-        # exercises = self.model.get_top_exercises()
-        # if exercises == []:  # TODO: refactor model response as dictionary with a key:value pair to indicate empty result
-        #     pass
-        # else:
-        #     self.view.exercise_selection.config(values=exercises)
-        #     self.view.exercise_selection.set(exercises[0])
-        #     self.view.rep_selection.config(values=self.model.get_repetitions_by_exercise(exercises[0]))
-        #     self.view.rep_selection.set(self.model.get_repetitions_by_exercise(exercises[0])[0])
-        #     self.render_graph(None)
+        visuals = self.model.visuals
+        if visuals == []:  # TODO: refactor model response as dictionary with a key:value pair to indicate empty result
+            pass
+        else:
+            self.view.visual_selection.config(values=visuals)
+            self.view.visual_selection.set(visuals[0])
+
+            self.view.week_selection.config(values=[i for i in range(18)])  # TODO: Dynamically set values
+            self.view.week_selection.set(self.model.eval_week)
+            # self.render_graph(None)
+
         self.view.grid()
 
     def exit_view(self):

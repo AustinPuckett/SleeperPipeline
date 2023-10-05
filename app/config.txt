@@ -1,0 +1,1 @@
+{"username": "ap", "database": "ap.db", "league_id": "983048181460119552", "directory": "C:\\Users\\pucke\\PycharmProjects\\SleeperPipeline\\app", "draft_ids": {}}

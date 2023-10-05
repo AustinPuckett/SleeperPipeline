@@ -33,6 +33,11 @@ class LoginView(tk.Frame):
         # self.login_label = ttk.Label(self, text='Login', font=label_font)
         self.username_entry = ttk.Combobox(self, font=entry_font, width=15)
         self.username_entry_text = ttk.Label(self, text='Username:', font=label_font)
+
+        self.data_refresh_var = tk.IntVar()
+        self.data_refresh_entry = ttk.Checkbutton(self, text='Refresh Data', variable=self.data_refresh_var)
+        self.data_refresh_entry.state(['!selected'])
+        # self.data_refresh_entry_text = ttk.Label(self, text='Refresh Data:', font=label_font)
         self.login_button = ttk.Button(self, text='Login')
         self.create_account_button = ttk.Button(self, text='Create Account')
 
@@ -42,8 +47,11 @@ class LoginView(tk.Frame):
         self.username_entry.grid(row=1, column=1, sticky='W', padx=2, pady=1)
         self.username_entry_text.grid(row=1, column=0, sticky='E', padx=2, pady=1)
 
-        self.create_account_button.grid(row=2, column=0, sticky='E', padx=2, pady=5)
-        self.login_button.grid(row=2, column=1, sticky='W', padx=2, pady=5)
+        self.data_refresh_entry.grid(row=2, column=0, sticky='W', padx=2, pady=1)
+        # self.data_refresh_entry_text.grid(row=2, column=1, sticky='W', padx=2, pady=1)
+
+        self.create_account_button.grid(row=3, column=0, sticky='E', padx=2, pady=5)
+        self.login_button.grid(row=3, column=1, sticky='W', padx=2, pady=5)
 
         # Presenter Bindings
         self.login_button.bind('<Button-1>', presenter.login)
@@ -126,43 +134,47 @@ class StartView(tk.Frame):
         # label_width = 20
 
         # frame1 widgets
-        actions_label = tk.Label(self.frame1, text='Log Data', height=label_height, width=button_width, anchor='center',
+        actions_label = tk.Label(self.frame1, text='Import Data', height=label_height, width=button_width, anchor='center',
                                  bg=color1)  # , height=button_height
-        button_log_workout = tk.Button(self.frame1, text='Log Workout', height=button_height, width=button_width,
-                                       bg='SystemButtonFace')
-        button_log_exercise = tk.Button(self.frame1, text='Log Exercise', height=button_height, width=button_width,
-                                        bg='SystemButtonFace')
-        button_log_diet = tk.Button(self.frame1, text='Log Diet', height=button_height, width=button_width,
-                                    bg='SystemButtonFace')
+        button_import_fp_ros_data = tk.Button(self.frame1, text='Import Fantasy Pros ROS Projections', height=button_height,
+                                              width=button_width,
+                                              bg='SystemButtonFace')
+        button_import_fp_week_data = tk.Button(self.frame1, text='Import Fantasy Pros Week Projections',
+                                               height=button_height, width=button_width,
+                                               bg='SystemButtonFace')
 
         actions_label.grid(row=0, column=0, padx=1, pady=2)
-        button_log_workout.grid(row=1, column=0, padx=1, pady=2)
-        button_log_exercise.grid(row=2, column=0, padx=1, pady=2)
-        button_log_diet.grid(row=3, column=0, padx=1, pady=2)
+        button_import_fp_ros_data.grid(row=1, column=0, padx=1, pady=2)
+        button_import_fp_week_data.grid(row=2, column=0, padx=1, pady=2)
 
         # action_label_font.configure(underline=True)
         actions_label['font'] = action_label_font
-        button_log_exercise['font'] = my_font
-        button_log_workout['font'] = my_font
-        button_log_diet['font'] = my_font
+        button_import_fp_ros_data['font'] = my_font
+        button_import_fp_week_data['font'] = my_font
 
         # frame2
         self.frame2 = tk.Frame(self, bd=2, relief='ridge', height=400, width=400, bg=color2)
 
         dashboard_header = tk.Label(self.frame2, text='Dashboard', height=label_height, width=60, anchor='center',
                                     bg=color2)
-        self.exercise_selection = ttk.Combobox(self.frame2, height=button_height, width=20)
-        self.rep_selection = ttk.Combobox(self.frame2, height=button_height, width=20)
+        self.visual_selection = ttk.Combobox(self.frame2, height=button_height, width=20)
+        # self.week_selection_text = tk.Label(self.frame2, text='Week:')
+        self.week_selection = ttk.Combobox(self.frame2, height=button_height, width=20)
         self.visualization = tk.Label(self.frame2)
 
         exercise_selection_text = tk.Label(self.frame2, font=label_font)
-        rep_selection_text = tk.Label(self.frame2, text='reps', font=label_font)
+        week_selection_text = tk.Label(self.frame2, text='week', font=label_font)
+
+        create_visual_button = tk.Button(self.frame2, text='Generate Graphic',
+                                               height=button_height, width=button_width,
+                                               bg='SystemButtonFace')
 
         dashboard_header.grid(row=0, column=0, columnspan=1)
         # exercise_selection_text.grid(row=1, column=0, columnspan=1)
-        self.exercise_selection.grid(row=1, column=0, columnspan=1)
-        self.rep_selection.grid(row=2, column=0, columnspan=1)
-        rep_selection_text.grid(row=3, column=0, columnspan=1)
+        self.visual_selection.grid(row=1, column=0, columnspan=1)
+        self.week_selection.grid(row=2, column=0, columnspan=1)
+        week_selection_text.grid(row=3, column=0, columnspan=1)
+        create_visual_button.grid(row=4, column=0, columnspan=1)
 
         dashboard_header['font'] = action_label_font
 
@@ -174,5 +186,6 @@ class StartView(tk.Frame):
         # button_log_workout.bind('<Button-1>', presenter.show_log_workout_view)
         # button_log_exercise.bind('<Button-1>', presenter.show_log_exercise_view)
         # button_log_diet.bind('<Button-1>', presenter.show_date_view)
-        # self.exercise_selection.bind('<<ComboboxSelected>>', presenter.get_repetitions)
-        # self.rep_selection.bind('<<ComboboxSelected>>', presenter.render_graph)
+        # self.visual_selection.bind('<<ComboboxSelected>>', presenter.get_repetitions)
+        # self.week_selection.bind('<<ComboboxSelected>>', presenter.render_graph)
+        create_visual_button.bind('<Button-1>', presenter.render_graph)

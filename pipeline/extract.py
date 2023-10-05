@@ -1,7 +1,5 @@
 import requests
 import json
-import os
-import time
 
 
 def save_json_file(json_object, file_name):
@@ -152,7 +150,6 @@ def extract_all(api_params={'league_id':'858131629682577408',
                 include_player_data=True):
     '''Call all "get" functions and save their output_data to a specified directory.'''
 
-    t0 = time.time()
     num_weeks = 18
     json_dict = {}
 
@@ -173,9 +170,6 @@ def extract_all(api_params={'league_id':'858131629682577408',
     for i in range(1, num_weeks + 1):
         json_name = 'matchups_week_' + "{:02d}".format(i)  # Transform relies on this naming convention
         json_dict[json_name] = get_matchups(week=i, league_id=api_params['league_id'])
-
-    t1 = time.time()
-    print(t1 - t0, " seconds to extract data from the Sleeper API.")
 
     # # Save json objects to a specified directory
     # for json_object, json_name in zip(json_objects, json_names):
