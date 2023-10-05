@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     league_df = pd.read_sql_query("SELECT * FROM league", conn)
     roster_df = pd.read_sql_query("SELECT * FROM roster", conn)
-    user_df = pd.read_sql_query("SELECT * FROM user", cocdnn)
+    user_df = pd.read_sql_query("SELECT * FROM user", conn)
     roster_week_df = pd.read_sql_query("SELECT * FROM roster_week", conn)
 
     conn.close()
