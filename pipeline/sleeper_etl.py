@@ -4,7 +4,7 @@ import pipeline.load as load
 import time
 
 
-def run_sleeper_etl(db_conn, api_params, include_player_data=True):
+def run_sleeper_etl(db_conn, api_params, year, include_player_data=True):
     # TODO: remove hard coded api params
 
     table_names = ['league', 'roster', 'rostered_player', 'user', 'roster_week', 'player_week', 'league_transaction',
@@ -18,7 +18,7 @@ def run_sleeper_etl(db_conn, api_params, include_player_data=True):
     print(t1 - t0, " seconds to extract data from the Sleeper API.")
 
     t0 = time.time()
-    table_entries_dict = transform.transform_many(table_names, json_dict)
+    table_entries_dict = transform.transform_many(table_names, json_dict, year)
     t1 = time.time()
     print(t1 - t0, " seconds to transform Sleeper API data.")
 

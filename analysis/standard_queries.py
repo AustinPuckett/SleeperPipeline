@@ -1,7 +1,9 @@
 import sqlite3 as sql
 import pandas as pd
+import pipeline.fantasy_db as fantasy_db
+import pipeline.sleeper_etl as sleeper_etl
 
-def get_roster(conn, roster_id, week, starters_only=False):
+def get_roster(conn, roster_id, week, eval_year, starters_only=False):
     '''Warning: This function uses string formatting of the SQL statement in place of a bind'''
 
     cursor = conn.cursor()
@@ -15,7 +17,7 @@ def get_roster(conn, roster_id, week, starters_only=False):
                 LEFT JOIN ros_projections rproj ON p.full_name = rproj."PLAYER NAME" AND p.team = rproj.TEAM
                 LEFT JOIN week_projections wproj ON p.full_name = wproj."PLAYER NAME" AND p.team = rproj.TEAM AND
                  pw.week_id = wproj.week
-                WHERE r.roster_id = {roster_id} AND pw.week_id = {week}
+                WHERE r.roster_id = {roster_id} AND pw.week_id = {week} AND r.year = {eval_year}
                 '''
     roster = pd.read_sql(query, conn)
     # roster = roster.loc[roster['full_name'].isnull(), 'full_name'] = roster['team']
@@ -29,26 +31,26 @@ def get_roster(conn, roster_id, week, starters_only=False):
 def get_player(full_name, pos, team=None):
     pass
 
-def get_roster_df(conn):
-    roster_df = pd.read_sql_query("SELECT * FROM roster", conn)
+def get_roster_df(conn, eval_year):
+    roster_df = pd.read_sql_query("SELECT * FROM roster WHERE year = ?", conn, params=(eval_year,))
     return roster_df
 
-def get_league_df(conn):
-    league_df = pd.read_sql_query("SELECT * FROM league", conn)
+def get_league_df(conn, eval_year):
+    league_df = pd.read_sql_query("SELECT * FROM league WHERE year = ?", conn, params=(eval_year,))
     return league_df
 
-def get_user_df(conn):
-    user_df = pd.read_sql_query("SELECT * FROM user", conn)
+def get_user_df(conn, eval_year):
+    user_df = pd.read_sql_query("SELECT * FROM user WHERE year = ?", conn, params=(eval_year,))
     return user_df
 
-def get_roster_week_df(conn):
-    roster_week_df = pd.read_sql_query("SELECT * FROM roster_week", conn)
+def get_roster_week_df(conn, eval_year):
+    roster_week_df = pd.read_sql_query("SELECT * FROM roster_week WHERE year = ?", conn, params=(eval_year,))
     return roster_week_df
 
-def get_luck_factor_df(conn, eval_week):
-    roster_week_df = pd.read_sql_query("SELECT * FROM roster_week", conn)
-    roster_df = pd.read_sql_query("SELECT * FROM roster", conn)
-    user_df = pd.read_sql_query("SELECT * FROM user", conn)
+def get_luck_factor_df(conn, eval_week, eval_year):
+    roster_week_df = get_roster_week_df(conn, eval_year)
+    roster_df = get_roster_df(conn, eval_year)
+    user_df = get_user_df(conn, eval_year)
 
     # Points by Roster week
     df_1 = (
@@ -88,10 +90,10 @@ def get_luck_factor_df(conn, eval_week):
 
     return luck_factor_df.reset_index()
 
-def get_roster_week_points_df(conn, eval_week):
-    roster_week_df = pd.read_sql_query("SELECT * FROM roster_week", conn)
-    roster_df = pd.read_sql_query("SELECT * FROM roster", conn)
-    user_df = pd.read_sql_query("SELECT * FROM user", conn)
+def get_roster_week_points_df(conn, eval_week, eval_year):
+    roster_week_df = get_roster_week_df(conn, eval_year)
+    roster_df = get_roster_df(conn, eval_year)
+    user_df = get_user_df(conn, eval_year)
 
     # Points by Roster week
     df_1 = (
@@ -114,6 +116,40 @@ def get_roster_week_points_df(conn, eval_week):
     roster_week_points_df = df_1.sort_values('points', ascending=False)
 
     return roster_week_points_df.reset_index()
+
+def get_season(conn, year):
+    season_df = pd.read_sql_query("SELECT * FROM season", conn)
+    season_df = season_df[season_df['year'] == year]
+    return season_df
+
+def get_all_seasons(conn):
+    season_df = pd.read_sql_query("SELECT * FROM season", conn)
+    return season_df
+
+def create_season(conn, year, league_id, draft_id):
+    table_name = 'season'
+    row_vals = [year, league_id, draft_id]
+    fantasy_db.create_table_row(conn, table_name, row_vals)
+    conn.commit()
+
+def create_season_table(conn):
+    table_name = 'season'
+    table_fields = ['year', 'league_id', 'draft_id']
+
+    if not fantasy_db.table_exists(conn, table_name):
+        fantasy_db.create_table(conn, table_name, table_fields)
+        conn.commit()
+
+def create_db(db_file_name):
+    conn = sql.connect(db_file_name)
+    conn.close()
+
+def connect_to_db(db_file_name):
+    return sql.connect(db_file_name)
+
+def load_season_data(conn, api_params, year):
+    sleeper_etl.run_sleeper_etl(conn, api_params, year)
+
 
 if __name__ == '__main__':
     db = 'fantasy.db'

@@ -76,8 +76,8 @@ class CreateAccountView(tk.Frame):
         self.username_entry = ttk.Entry(self, font=entry_font, width=20)
         self.username_entry_text = ttk.Label(self, text='Username:', font=label_font)
 
-        self.league_id_entry = ttk.Entry(self, font=entry_font, width=20)
-        self.league_id_entry_text = ttk.Label(self, text='League ID:', font=label_font)
+        # self.league_id_entry = ttk.Entry(self, font=entry_font, width=20)
+        # self.league_id_entry_text = ttk.Label(self, text='League ID:', font=label_font)
 
         self.login_button = ttk.Button(self, text='Back to Login')
         self.create_account_button = ttk.Button(self, text='Create Account')
@@ -88,8 +88,8 @@ class CreateAccountView(tk.Frame):
         self.username_entry.grid(row=1, column=1, sticky='W', padx=2, pady=1)
         self.username_entry_text.grid(row=1, column=0, sticky='E', padx=2, pady=1)
 
-        self.league_id_entry.grid(row=2, column=1, sticky='W', padx=2, pady=1)
-        self.league_id_entry_text.grid(row=2, column=0, sticky='E', padx=2, pady=1)
+        # self.league_id_entry.grid(row=2, column=1, sticky='W', padx=2, pady=1)
+        # self.league_id_entry_text.grid(row=2, column=0, sticky='E', padx=2, pady=1)
 
         self.login_button.grid(row=3, column=0, sticky='E', padx=2, pady=5)
         self.create_account_button.grid(row=3, column=1, sticky='W', padx=2, pady=5)
@@ -189,3 +189,80 @@ class StartView(tk.Frame):
         # self.visual_selection.bind('<<ComboboxSelected>>', presenter.get_repetitions)
         # self.week_selection.bind('<<ComboboxSelected>>', presenter.render_graph)
         create_visual_button.bind('<Button-1>', presenter.render_graph)
+
+
+class SeasonView(tk.Frame):
+    """The window where a user may enter a workout into the database.
+
+    """
+
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+
+    def init_ui(self, presenter):
+        # Widget settings
+        title_font = font.Font(family='Segoe UI', size=18, weight='bold')
+        header_font = font.Font(family='Segoe UI', size=15, weight='bold')
+        label_font = font.Font(family='Segoe UI', size=12, weight='bold')
+        entry_font = font.Font(family='Segoe UI', size=11, weight='normal')
+        button_font = font.Font(family='Segoe UI', size=11, weight='normal')
+
+        # Frame1
+        self.frame1 = tk.Frame(self)
+        self.title_text = ttk.Label(self.frame1, text='Season Manager', font=title_font, anchor='center')
+        self.tree = ttk.Treeview(self.frame1, show="headings")
+        self.title_text.grid(row=0, column=0, sticky="NSEW")
+        self.tree.grid(row=1, column=0, sticky="NSEW")
+
+        self.tree_menu = tk.Menu(self.frame1, tearoff=0)
+        self.tree_menu.add_command(label="Select", command=lambda: presenter.select_season())
+
+        # Frame1 Presenter Bindings
+        # self.tree.bind('<Button-1>', presenter.show_tree_menu)
+        self.tree.bind('<Double-Button-1>', presenter.select_season)
+        # Frame2
+        self.frame2 = tk.Frame(self)
+
+        # Create Widgets
+        self.frame2_header_text = ttk.Label(self.frame2, text='Season', font=header_font)
+        self.season = ttk.Entry(self.frame2, text='', font=entry_font)
+        self.league_id = ttk.Entry(self.frame2, text='', font=entry_font)
+        self.draft_id = ttk.Entry(self.frame2, text='', font=entry_font)
+
+        self.season_text = ttk.Label(self.frame2, text='Year: ', font=entry_font)
+        self.league_id_text = ttk.Label(self.frame2, text='League ID:', font=entry_font)
+        self.draft_id_text = ttk.Label(self.frame2, text='Draft ID: ', font=entry_font)
+
+        # Place entry and text widgets
+        self.frame2_header_text.grid(row=0, column=2, pady=15, columnspan=2, sticky='W')
+
+        self.season_text.grid(row=1, column=2, sticky='E', padx=2, pady=1)
+        self.league_id_text.grid(row=2, column=2, sticky='E', padx=2, pady=1)
+        self.draft_id_text.grid(row=3, column=2, sticky='E', padx=2, pady=1)
+
+        self.season.grid(row=1, column=3, sticky='E', padx=2, pady=1)
+        self.league_id.grid(row=2, column=3, sticky='E', padx=2, pady=1)
+        self.draft_id.grid(row=3, column=3, sticky='E', padx=2, pady=1)
+
+        # Frame3
+        self.frame3 = tk.Frame(self)
+        self.button_submit = ttk.Button(self.frame3, text='Create')
+        self.button_load = ttk.Button(self.frame3, text='Load Data')
+        self.button_exit = ttk.Button(self.frame3, text='Exit')
+        self.button_clear = ttk.Button(self.frame3, text='Clear')
+
+        self.button_exit.grid(row=0, column=0, sticky='S', padx=2, pady=5)
+        self.button_clear.grid(row=0, column=1, sticky='S', padx=2, pady=5)
+        self.button_submit.grid(row=0, column=2, sticky='S', padx=2, pady=5)
+        self.button_load.grid(row=0, column=3, sticky='S', padx=2, pady=5)
+
+        self.button_submit.bind('<Button-1>', presenter.submit_season)
+        self.button_exit.bind('<Button-1>', presenter.show_start_view)
+        self.button_clear.bind('<Button-1>', presenter.clear)
+        self.button_load.bind('<Button-1>', presenter.load_season_data)
+
+        # Frame placements
+        self.frame1.grid(row=0, column=0, padx=10, pady=2)
+        self.frame2.grid(row=1, column=0, padx=1, pady=5, sticky="NSEW")
+        self.frame3.grid(row=2, column=0, padx=1, pady=5, sticky="NSEW")

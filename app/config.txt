@@ -1,1 +1,6 @@
 {"username": "ap", "database": "ap.db", "league_id": "983048181460119552", "directory": "C:\\Users\\pucke\\PycharmProjects\\SleeperPipeline\\app", "draft_ids": {}}
+{"username": "2022_league", "database": "2022_league.db", "league_id": "858131629682577408", "directory": "C:\\Users\\pucke\\PycharmProjects\\SleeperPipeline\\app", "draft_ids": {}}
+{"username": "Austinmuh", "database": "Austinmuh.db", "directory": "C:\\Users\\pucke\\PycharmProjects\\SleeperPipeline\\app"}
+{"username": "dsafsdf", "database": "dsafsdf.db", "directory": "C:\\Users\\pucke\\PycharmProjects\\SleeperPipeline\\app"}
+{"username": "Test1", "database": "Test1.db", "directory": "C:\\Users\\pucke\\PycharmProjects\\SleeperPipeline\\app"}
+{"username": "test2", "database": "test2.db", "directory": "C:\\Users\\pucke\\PycharmProjects\\SleeperPipeline\\app"}

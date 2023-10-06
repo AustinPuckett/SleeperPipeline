@@ -21,6 +21,7 @@ class AppController(tk.Tk):
         self.views = {LoginView: {'model': AccountModel, 'presenter': LoginPresenter},
                       CreateAccountView: {'model': AccountModel, 'presenter': CreateAccountPresenter},
                       StartView: {'model': StartModel, 'presenter': StartPresenter},
+                      SeasonView: {'model': SeasonModel, 'presenter': SeasonPresenter}
                       }
 
         self.active_presenter = None
@@ -48,6 +49,7 @@ class AppController(tk.Tk):
             self.account_model = model()
             self.active_model = self.account_model
         elif presenter == CreateAccountPresenter:
+            self.account_model = model()
             self.active_model = model()
         else:
             self.add_menu()
@@ -82,7 +84,7 @@ class AppController(tk.Tk):
 
         # Data Menu
         datamenu = tk.Menu(menubar, tearoff=0)
-        # datamenu.add_command(label="Create Workout", command=lambda: self.change_view(WorkoutView))
+        datamenu.add_command(label="Seasons", command=lambda: self.change_view(SeasonView))
         # datamenu.add_command(label="Create Exercise", command=lambda: self.change_view(ExerciseView))
         # datamenu.add_command(label="Create Goal", command=lambda: self.change_view(GoalView))
         # datamenu.add_command(label="Mass Upload")

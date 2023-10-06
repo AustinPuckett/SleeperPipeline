@@ -131,7 +131,7 @@ def convert_dict_to_table_row(entry_dict, table_column_names):
 # Table data preparation, grouped by filename
 
 # league
-def transform_league(json_data):
+def transform_league(json_data, year):
     '''
     This function loops through the dictionary in the league.json file. If a value in the dictionary has depth, then it 
     will be excluded from the extraction.
@@ -144,11 +144,12 @@ def transform_league(json_data):
     keys = [] 
     values = []
     league_dict = transform_first_layer(json_data)
+    league_dict['year'] = year
     
     return dict_to_list(league_dict)
 
 # roster
-def transform_rosters(json_data):
+def transform_rosters(json_data, year):
     '''
     Data is sourced from the "rosters.json" file which is sourced from the "get_rosters" function of the Extract module
 
@@ -163,12 +164,13 @@ def transform_rosters(json_data):
         entry_dict['wins'] = roster_dict['settings']['wins']
         entry_dict['losses'] = roster_dict['settings']['losses']
         entry_dict['ties'] = roster_dict['settings']['ties']
+        entry_dict['year'] = year
         table_entries.append(entry_dict)
 
     return dict_to_list(table_entries)
 
 # rostered_player
-def transform_roster_players(json_data):
+def transform_roster_players(json_data, year):
     '''
     Data is sourced from the "rosters.json" file which is sourced from the "get_rosters" function of the Extract module
     
@@ -187,7 +189,8 @@ def transform_roster_players(json_data):
             player_dict = {'player_id': player_id, 
                            'roster_id': roster['roster_id'], 
                            'owner_id': roster['owner_id'], 
-                           'starter': starter}
+                           'starter': starter,
+                           'year': year,}
             player_entry_list.append(player_dict)
 
         # Append the player_id for bench players
@@ -197,13 +200,14 @@ def transform_roster_players(json_data):
             player_dict = {'player_id': player_id, 
                            'roster_id': roster['roster_id'], 
                            'owner_id': roster['owner_id'], 
-                           'starter': starter}
+                           'starter': starter,
+                           'year': year,}
             player_entry_list.append(player_dict)
 
     return dict_to_list(player_entry_list)
 
 # user
-def transform_users(json_data):
+def transform_users(json_data, year):
     '''
     Data is sourced from the "user_info.json" file which is sourced from the "get_user_info" function of the Extract module
     
@@ -215,12 +219,13 @@ def transform_users(json_data):
     table_entries = []
     for entry_dict in json_data:
         entry_dict = transform_first_layer(entry_dict)
+        entry_dict['year'] = year
         table_entries.append(entry_dict)
 
     return dict_to_list(table_entries)
 
 # roster_week
-def transform_roster_weeks(json_data, week):
+def transform_roster_weeks(json_data, week, year):
     '''
     Data is sourced from the "matchups_week_x.json" file which is sourced from the "get_matchups" function of the Extract module
     
@@ -237,13 +242,14 @@ def transform_roster_weeks(json_data, week):
         roster_dict = {'roster_id': roster['roster_id'],
                        'week_id': week,
                        'matchup_id': roster['matchup_id'],
-                       'points': roster['points']}
+                       'points': roster['points'],
+                       'year': year,}
         roster_week_entry_list.append(roster_dict)
 
     return dict_to_list(roster_week_entry_list)
 
 # player_week
-def transform_player_week(json_data, week):
+def transform_player_week(json_data, week, year):
     '''
     Data is sourced from the "matchups_week_x.json" file which is sourced from the "get_matchups" function of the Extract module
     
@@ -264,7 +270,8 @@ def transform_player_week(json_data, week):
                            'roster_id': roster['roster_id'],
                            'week_id': week,
                            'matchup_id': roster['matchup_id'],
-                           'starter': starter}
+                           'starter': starter,
+                           'year': year}
             player_week_entry_list.append(player_dict)
 
         # Append the player_id for bench players
@@ -275,13 +282,14 @@ def transform_player_week(json_data, week):
                            'roster_id': roster['roster_id'],
                            'week_id': week,
                            'matchup_id': roster['matchup_id'],
-                           'starter': starter}
+                           'starter': starter,
+                           'year': year}
             player_week_entry_list.append(player_dict)
 
     return dict_to_list(player_week_entry_list)
 
 # league_transaction
-def transform_transactions(json_data):
+def transform_transactions(json_data, year):
     '''
     Data is sourced from the "transactions.json" file which is sourced from the "get_transactions" function of the Extract module.
     
@@ -295,12 +303,13 @@ def transform_transactions(json_data):
     table_entries = []
     for entry_dict in json_data:
         entry_dict = transform_first_layer(entry_dict)
+        entry_dict['year'] = year
         table_entries.append(entry_dict)
 
     return dict_to_list(table_entries)
 
 # nfl_state
-def transform_nfl_state(json_data):
+def transform_nfl_state(json_data, year):
     '''
     Data is sourced from the "nfl_state.json" file which is sourced from the "get_nfl_state" function of the Extract module.
     
@@ -310,11 +319,12 @@ def transform_nfl_state(json_data):
 
 
     entry_dict = transform_first_layer(json_data)
+    entry_dict['year'] = year
 
     return dict_to_list(entry_dict)
 
 # draft_info
-def transform_draft_info(json_data):
+def transform_draft_info(json_data, year):
     '''
     Data is sourced from the "draft_info.json" file which is sourced from the "get_draft_info" function of the Extract module
     
@@ -324,11 +334,12 @@ def transform_draft_info(json_data):
 
 
     entry_dict = transform_first_layer(json_data)
+    entry_dict['year'] = year
 
     return dict_to_list(entry_dict)
 
 # draft_order
-def transform_draft_order(json_data):
+def transform_draft_order(json_data, year):
     '''
     Data is sourced from the "draft_order.json" file which is sourced from the "get_draft_order" function of the Extract module
     
@@ -341,13 +352,14 @@ def transform_draft_order(json_data):
     for user_id, draft_slot in json_data["draft_order"].items():
         draft_order_entry = {'user_id': user_id,
                              'draft_slot': draft_slot,
-                             'draft_id': json_data['draft_id']}
+                             'draft_id': json_data['draft_id'],
+                             'year': year}
         draft_order_entries.append(draft_order_entry)
 
     return dict_to_list(draft_order_entries)
 
 # draft_pick
-def transform_draft_picks(json_data):
+def transform_draft_picks(json_data, year):
     '''
     Data is sourced from the "draft_picks.json" file which is sourced from the "get_draft_picks" function of the Extract module
     
@@ -358,12 +370,13 @@ def transform_draft_picks(json_data):
     table_entries = []
     for entry_dict in json_data:
         entry_dict = transform_first_layer(entry_dict)
+        entry_dict['year'] = year
         table_entries.append(entry_dict)
 
     return dict_to_list(table_entries)
 
 # player
-def transform_player_data(json_data):
+def transform_player_data(json_data, year):
     '''
     Data is sourced from the "player_data.json" file which is sourced from the "get_player_data" function of the Extract module
     
@@ -373,11 +386,12 @@ def transform_player_data(json_data):
 
     table_entries = []
     for player_id, player_dict in json_data.items():
+        player_dict['year'] = year
         table_entries.append(player_dict)
     return dict_to_list(table_entries)
 
 # General transform function
-def transform_many(table_names, json_dict):
+def transform_many(table_names, json_dict, year):
     '''
     This function runs transformations for the specified table names.
     
@@ -417,11 +431,11 @@ def transform_many(table_names, json_dict):
             for i in range(1, 19):
                 endpoint = table_to_endpoint_map[table_name]['endpoint'] + '{:02d}'.format(i)
                 json_data = json_dict[endpoint]
-                table_entries += transform_func(json_data, week=int(i))
+                table_entries += transform_func(json_data, week=int(i), year=year)
         else:
             endpoint = table_to_endpoint_map[table_name]['endpoint']
             json_data = json_dict[endpoint]
-            table_entries = transform_func(json_data)
+            table_entries = transform_func(json_data, year)
 
         table_entries_dict[table_name] = table_entries
         
