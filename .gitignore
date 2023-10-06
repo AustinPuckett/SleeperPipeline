@@ -1,0 +1,5 @@
+
+*.db
+app/config.txt
+venv/
+
